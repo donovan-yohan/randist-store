@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"yarn next dev\" \"yarn watch:typegen\"",
     "build": "next build",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
@@ -17,16 +17,31 @@
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
     "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "typegen": "npx sanity schema extract --enforce-required-fields && npx sanity typegen generate && node scripts/replace-null.js sanity/lib/sanity.types.ts",
+    "watch:typegen": "chokidar './sanity/lib/sanity.queries.ts' './sanity/schemaTypes/**/*' -c \"yarn typegen\""
   },
   "dependencies": {
     "@mantine/core": "7.17.2",
+    "@mantine/form": "^7.17.3",
     "@mantine/hooks": "7.17.2",
+    "@mantine/notifications": "^7.17.3",
     "@next/bundle-analyzer": "^15.2.3",
+    "@sanity/client": "^6.28.3",
+    "@sanity/icons": "^3.7.0",
+    "@sanity/image-url": "^1.1.0",
+    "@sanity/types": "^3.81.0",
+    "@sanity/ui": "^2.15.8",
+    "@sanity/vision": "3",
     "@tabler/icons-react": "^3.31.0",
-    "next": "15.2.3",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "@tanstack/react-query": "^5.69.0",
+    "@tanstack/react-query-devtools": "^5.69.0",
+    "next": "^15.0.0",
+    "next-sanity": "9.9.6",
+    "react": "^19.0.0",
+    "react-dom": "19.0.0",
+    "sanity": "^3.81.0",
+    "styled-components": "^6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
@@ -43,6 +58,8 @@
     "@types/node": "^22.13.11",
     "@types/react": "19.0.12",
     "babel-loader": "^10.0.0",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.1.2",
     "eslint": "^9.23.0",
     "eslint-config-mantine": "^4.0.3",
     "eslint-plugin-jsx-a11y": "^6.10.2",
