@@ -42,7 +42,7 @@ export default function ProductDetailPage() {
 
     useEffect(() => {
         const el = scrollRef.current
-        if (!el) return
+        if (!el) { return }
 
         const handleScroll = () => {
             const scrollLeft = el.scrollLeft
