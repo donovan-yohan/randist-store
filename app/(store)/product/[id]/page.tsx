@@ -1,10 +1,11 @@
 'use client'
 
+import { ColourOption } from '@/components/ColourOption/ColourOption'
 import { RandistPortableText } from '@/components/RandistPortableText/RandistPortableText'
 import { useCart } from '@/lib/contexts/CartContext'
 import { productDetailOptions } from '@/lib/queries/queries'
 import { urlFor } from '@/sanity/lib/image'
-import { Badge, Button, Center, Group, Image, Loader, Modal, NumberInput, ScrollArea, Stack, Text, Title } from '@mantine/core'
+import { Badge, Button, Center, Group, Image, Loader, Modal, NumberFormatter, NumberInput, ScrollArea, Stack, Text, Title } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
@@ -20,8 +21,8 @@ export default function ProductDetailPage() {
     const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false)
     const imageRefs = useRef<(HTMLDivElement)[]>([])
 
-    const [selectedOption, setSelectedOption] = useState<string | null>(null)
-    const [selectedSize, setSelectedSize] = useState<string | null>(null)
+    const [selectedOption, setSelectedOption] = useState<string | undefined>()
+    const [selectedSize, setSelectedSize] = useState<string | undefined>()
     const [quantity, setQuantity] = useState(1)
 
     const { addToCart } = useCart()
@@ -56,7 +57,7 @@ export default function ProductDetailPage() {
 
         el.addEventListener('scroll', handleScroll, { passive: true })
         return () => el.removeEventListener('scroll', handleScroll)
-    }, [])
+    }, [scrollRef, imageRefs])
 
     if (isLoading) {
         return (
@@ -76,7 +77,7 @@ export default function ProductDetailPage() {
         <>
             <Group gap='xl' align='flex-start' mt='xl'>
                 {allImages.length > 0 && (
-                    <Stack style={{ maxWidth: '50%' }}>
+                    <Stack style={{ maxWidth: '50%', minWidth: '50%' }}>
                         <div style={{ position: 'relative' }}>
                             <ScrollArea type="scroll" scrollbars="x" viewportRef={scrollRef} style={{ overflow: 'hidden' }}>
                                 <div style={{ display: 'flex', gap: '1rem', scrollSnapType: 'x mandatory' }}>
@@ -152,26 +153,26 @@ export default function ProductDetailPage() {
                 )}
                 <Stack>
                     <Title order={2}>{product.name}</Title>
-                    <Text size="lg"><b>{product.price}</b></Text>
+                    <Text size="lg"><b><NumberFormatter prefix='$' value={product.price} /></b></Text>
 
                     {product.description && (<RandistPortableText value={product.description} />)}
 
                     {product.options?.length && (
                         <Stack>
-                            <Text fw={500}>Available Options:</Text>
+                            <Text span fw={500}>Available Options: {selectedOption && <Text span c="dimmed" size='sm'>Current: {product.options.find(opt => opt._key === selectedOption)?.name}</Text>}</Text>
                             <Group>
                                 {product.options.map(option => (
-                                    <Badge
+                                    <ColourOption
                                         key={option._key}
-                                        variant={selectedOption === option._key ? 'filled' : 'outline'}
                                         onClick={() => {
                                             setSelectedOption(option._key)
                                             scrollToImage(allImages.findIndex(img => img._key === option.images?.[0]?._key))
                                         }}
                                         style={{ cursor: 'pointer' }}
-                                    >
-                                        {option.name}
-                                    </Badge>
+                                        name={option.name!}
+                                        colourOption={option.colour}
+                                        selected={selectedOption === option._key}
+                                    />
                                 ))}
                             </Group>
                         </Stack>
@@ -179,7 +180,7 @@ export default function ProductDetailPage() {
 
                     {product.sizes?.length && (
                         <Stack>
-                            <Text fw={500}>Available Sizes:</Text>
+                            <Text span fw={500}>Available Sizes: {selectedSize && <Text span c="dimmed" size='sm'>Current: {selectedSize}</Text>}</Text>
                             <Group>
                                 {product.sizes.map(size => (
                                     <Badge
@@ -204,7 +205,6 @@ export default function ProductDetailPage() {
                             onChange={(val) => setQuantity(parseInt(`${val}`, 10))}
                             clampBehavior="strict"
                         />
-
                         <Button mt="md" disabled={!selectedOption || !selectedSize} onClick={() => {
                             addToCart({
                                 productId: product._id,

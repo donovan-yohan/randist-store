@@ -2,9 +2,9 @@
 
 import { useLocalStorage } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useState } from 'react'
 
-type CartItem = {
+export type CartItem = {
     productId: string
     optionId: string
     imageUrl: string
@@ -28,6 +28,8 @@ type CartContextType = {
     clearCart: () => void
     addQuantity: (id: CartId) => void
     removeQuantity: (id: CartId) => void
+    submittedOrder: boolean
+    setSubmittedOrder: (submitted: boolean) => void
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -37,6 +39,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         key: 'randist-cart',
         defaultValue: [],
     })
+    const [submittedOrder, setSubmittedOrder] = useState(false)
 
     const addToCart = (item: CartItem) => {
         setCart((prev) => {
@@ -120,7 +123,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const clearCart = () => setCart([])
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, addQuantity, removeQuantity }}>
+        <CartContext.Provider value={{ cart, submittedOrder, setSubmittedOrder, addToCart, removeFromCart, clearCart, addQuantity, removeQuantity }}>
             {children}
         </CartContext.Provider>
     )

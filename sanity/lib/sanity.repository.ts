@@ -3,7 +3,12 @@
 //     client.fetch<ProductsQueryResult>(query);
 
 import { sanityClient } from './client';
-import { CartProductList, ProductDetail, ProductList } from './sanity.queries';
+import {
+  CartProductList,
+  ProductDetail,
+  ProductList,
+  ProductListWithSearch,
+} from './sanity.queries';
 import { CartProductListResult, ProductDetailResult, ProductListResult } from './sanity.types';
 
 //   const fetchDetailedProduct = (slug: string): Promise<FetchDetailedProductResult> => {
@@ -17,7 +22,13 @@ import { CartProductListResult, ProductDetailResult, ProductListResult } from '.
 //     } : null
 //   }
 
-export const fetchProductList = async (): Promise<ProductListResult> => {
+export const fetchProductList = async (search?: string): Promise<ProductListResult> => {
+  if (search) {
+    return sanityClient.fetch(ProductListWithSearch, {
+      keywordsFuzzy: search.split(' ').map((word) => `${word}*`),
+      keywords: search.split(' '),
+    });
+  }
   return sanityClient.fetch(ProductList);
 };
 

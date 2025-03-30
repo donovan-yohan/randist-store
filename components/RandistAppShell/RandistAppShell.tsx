@@ -3,11 +3,12 @@
 import { useCart } from "@/lib/contexts/CartContext"
 import { ActionIcon, AppShell, Drawer, Group, Indicator, ScrollArea, TextInput } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { IconSearch, IconShoppingCart } from "@tabler/icons-react"
+import { IconArrowRight, IconSearch, IconShoppingCart } from "@tabler/icons-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { PropsWithChildren, useEffect, useRef } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { PropsWithChildren, useEffect, useRef, useState } from "react"
 import Cart from "../Cart/Cart"
+import { RandistSvg } from "../Svgs/RandistSvg"
 import classes from './RandistAppShell.module.css'
 
 export const RandistAppShell: React.FC<PropsWithChildren> = ({ children }) => {
@@ -16,10 +17,16 @@ export const RandistAppShell: React.FC<PropsWithChildren> = ({ children }) => {
   const { cart } = useCart()
   const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0)
 
-  const pathname = usePathname()
-
   const cartCountRef = useRef<HTMLDivElement>(null)
   const cartIconRef = useRef<HTMLButtonElement>(null)
+
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const initialSearch = searchParams.get('search') ?? ''
+
+  const [search, setSearch] = useState(initialSearch)
+
 
   useEffect(() => {
     if (totalQuantity === 0) { return }
@@ -52,18 +59,36 @@ export const RandistAppShell: React.FC<PropsWithChildren> = ({ children }) => {
       //   width: 300,
       //   breakpoint: 'sm',
       // }}
-      padding="md"
+      padding="lg"
     >
-      <AppShell.Header>
-        <Group justify="space-between" h="100%" px="24px">
+      <AppShell.Header px='sm'>
+        <Group justify="space-between" h="100%" px='xl'>
           <Group>
             <Link href="/" style={{ textDecoration: 'none' }}>
-              Randist
+              <RandistSvg style={{ marginBottom: '4px' }} />
             </Link>
             <TextInput
               placeholder="Search products..."
               leftSection={<IconSearch size={16} />}
               style={{ width: 300 }}
+              value={search}
+              onChange={(e) => setSearch(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  router.push(`/?search=${search}`)
+                }
+              }}
+              rightSection={
+                <ActionIcon
+                  size={32}
+                  variant="subtle"
+                  onClick={() => {
+                    router.push(`/?search=${search}`)
+                  }}
+                >
+                  <IconArrowRight size={18} stroke={1.5} />
+                </ActionIcon>
+              }
             />
           </Group>
 

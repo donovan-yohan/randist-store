@@ -5,7 +5,6 @@ import { theme } from '@/theme'
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import React, { PropsWithChildren } from 'react'
 
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
@@ -13,13 +12,13 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <MantineProvider theme={theme}>
+            <MantineProvider defaultColorScheme='light' theme={theme}>
                 <CartProvider>
                     <Notifications />
                     {children}
                 </CartProvider>
             </MantineProvider>
-            <ReactQueryDevtools buttonPosition='top-left' />
+            {/* <ReactQueryDevtools buttonPosition='top-right' /> */}
         </QueryClientProvider>
     )
 }

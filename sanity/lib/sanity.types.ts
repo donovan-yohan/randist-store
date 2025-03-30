@@ -105,6 +105,7 @@ export type Product = {
   price?: number;
   options?: Array<{
     name?: string;
+    colour?: Color;
     images?: Array<{
       asset?: {
         _ref: string;
@@ -180,6 +181,39 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
+export type Color = {
+  _type: 'color';
+  hex?: string;
+  alpha?: number;
+  hsl?: HslaColor;
+  hsv?: HsvaColor;
+  rgb?: RgbaColor;
+};
+
+export type RgbaColor = {
+  _type: 'rgbaColor';
+  r?: number;
+  g?: number;
+  b?: number;
+  a?: number;
+};
+
+export type HsvaColor = {
+  _type: 'hsvaColor';
+  h?: number;
+  s?: number;
+  v?: number;
+  a?: number;
+};
+
+export type HslaColor = {
+  _type: 'hslaColor';
+  h?: number;
+  s?: number;
+  l?: number;
+  a?: number;
+};
+
 export type AllSanitySchemaTypes =
   | SanityImagePaletteSwatch
   | SanityImagePalette
@@ -192,7 +226,11 @@ export type AllSanitySchemaTypes =
   | SanityImageHotspot
   | SanityImageAsset
   | SanityAssetSourceData
-  | SanityImageMetadata;
+  | SanityImageMetadata
+  | Color
+  | RgbaColor
+  | HsvaColor
+  | HslaColor;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/sanity.queries.ts
 // Variable: ProductList
@@ -201,6 +239,21 @@ export type ProductListResult = Array<{
   _id: string;
   name: string;
   price: number | undefined;
+  productImages: {
+    _key: string;
+    asset: {
+      _id: string;
+      url: string | undefined;
+    } | undefined;
+  } | undefined;
+}>;
+// Variable: ProductListWithSearch
+// Query: *[_type == "product" && (  name match $keywordsFuzzy || count(tags[@ in $keywords]) > 0)] | order(name asc)[0..100] {  _id,  name,  price,  tags,  "productImages": options[]{    images[]{      _key,      asset->{        _id,        url      }    }  }[0].images[0]}
+export type ProductListWithSearchResult = Array<{
+  _id: string;
+  name: string;
+  price: number | undefined;
+  tags: Array<string> | undefined;
   productImages: {
     _key: string;
     asset: {
@@ -239,6 +292,7 @@ export type ProductDetailResult = {
   price?: number;
   options?: Array<{
     name?: string;
+    colour?: Color;
     images?: Array<{
       asset?: {
         _ref: string;
@@ -268,6 +322,7 @@ export type CartProductListResult = Array<{
 declare module '@sanity/client' {
   interface SanityQueries {
     '*[_type == "product"] | order(name asc)[0..100] {\n    _id,\n    name,\n    price,\n    "productImages": options[]{\n      images[]{\n        _key,\n        asset->{\n          _id,\n          url\n        }\n      }\n    }[0].images[0]\n}': ProductListResult;
+    '*[_type == "product" && (\n  name match $keywordsFuzzy || count(tags[@ in $keywords]) > 0\n)] | order(name asc)[0..100] {\n  _id,\n  name,\n  price,\n  tags,\n  "productImages": options[]{\n    images[]{\n      _key,\n      asset->{\n        _id,\n        url\n      }\n    }\n  }[0].images[0]\n}': ProductListWithSearchResult;
     '*[_type == "product" && _id == $id][0]': ProductDetailResult;
     '*[_type == "product" && _id in $productIds] | order(name asc) {\n  _id,\n  name,\n  price,\n  "productImages": *[_type == "product" && _id == ^._id][0].options[ _key == $optionMap[^._id] ][0].images[0]{\n    _key,\n    asset->{\n      _id,\n      url\n    }\n  }\n}': CartProductListResult;
   }

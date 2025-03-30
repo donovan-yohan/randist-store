@@ -2,12 +2,14 @@
 
 import { productListOptions } from "@/lib/queries/queries"
 import { urlFor } from "@/sanity/lib/image"
-import { LoadingOverlay, Paper, SimpleGrid, Text } from "@mantine/core"
+import { Card, LoadingOverlay, SimpleGrid, Text } from "@mantine/core"
 import { useQuery } from "@tanstack/react-query"
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function HomePage() {
-  const { data, isLoading } = useQuery(productListOptions)
+  const searchParams = useSearchParams()
+  const search = searchParams.get('search') || undefined
+  const { data, isLoading } = useQuery(productListOptions(search))
   const router = useRouter()
 
   return (
@@ -18,7 +20,8 @@ export default function HomePage() {
         spacing="md"
       >
         {data?.map((product) => (
-          <Paper
+          <Card
+            className="productCard"
             key={product._id}
             shadow="sm"
             p="md"
@@ -34,7 +37,7 @@ export default function HomePage() {
             />}
             <Text><b>{product.name}</b></Text>
             <Text size="sm" color="dimmed">{product.price}</Text>
-          </Paper>
+          </Card>
         ))}
       </SimpleGrid>
     </>

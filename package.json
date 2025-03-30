@@ -28,6 +28,7 @@
     "@mantine/notifications": "^7.17.3",
     "@next/bundle-analyzer": "^15.2.3",
     "@sanity/client": "^6.28.3",
+    "@sanity/color-input": "^4.0.3",
     "@sanity/icons": "^3.7.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/types": "^3.81.0",
@@ -40,6 +41,7 @@
     "next-sanity": "9.9.6",
     "react": "^19.0.0",
     "react-dom": "19.0.0",
+    "resend": "^4.2.0",
     "sanity": "^3.81.0",
     "styled-components": "^6.1"
   },

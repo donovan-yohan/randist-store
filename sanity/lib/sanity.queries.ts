@@ -35,6 +35,24 @@ export const ProductList = defineQuery(`*[_type == "product"] | order(name asc)[
     }[0].images[0]
 }`);
 
+export const ProductListWithSearch = defineQuery(`*[_type == "product" && (
+  name match $keywordsFuzzy || count(tags[@ in $keywords]) > 0
+)] | order(name asc)[0..100] {
+  _id,
+  name,
+  price,
+  tags,
+  "productImages": options[]{
+    images[]{
+      _key,
+      asset->{
+        _id,
+        url
+      }
+    }
+  }[0].images[0]
+}`);
+
 export const ProductDetail = defineQuery(`*[_type == "product" && _id == $id][0]`);
 
 export const CartProductList =

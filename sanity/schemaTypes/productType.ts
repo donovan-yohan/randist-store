@@ -38,6 +38,10 @@ export const productType = defineType({
               type: 'string',
             }),
             defineField({
+              name: 'colour',
+              type: 'color',
+            }),
+            defineField({
               name: 'images',
               type: 'array',
               of: [
