@@ -30,7 +30,6 @@ type CartContextType = {
     removeQuantity: (id: CartId) => void
     submittedOrder: boolean
     setSubmittedOrder: (submitted: boolean) => void
-    clearCachedCart: () => void
 }
 
 const CartContext = createContext<CartContextType | null>(null)
