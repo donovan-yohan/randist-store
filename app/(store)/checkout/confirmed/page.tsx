@@ -4,10 +4,12 @@ import Cart from "@/components/Cart/Cart"
 import { useCart } from "@/lib/contexts/CartContext"
 import { Grid, Paper, Stack, Text, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 export default function CheckoutConfirmedPage() {
-    const { clearCart, setSubmittedOrder, submittedOrder } = useCart()
+    const { clearCart, setSubmittedOrder, submittedOrder, cart } = useCart()
+    const [cartLocal, setCartLocal] = useState(cart)
+
     const router = useRouter()
 
     useEffect(() => {
@@ -16,9 +18,10 @@ export default function CheckoutConfirmedPage() {
             return
         }
 
+        setCartLocal(cart)
+        clearCart()
         return () => {
             if (submittedOrder) {
-                clearCart()
                 setSubmittedOrder(false)
             }
         }
@@ -37,7 +40,7 @@ export default function CheckoutConfirmedPage() {
 
             <Grid.Col span={{ base: 12, md: 5 }}>
                 <Paper withBorder p="md">
-                    <Cart hideCheckoutButton readOnly />
+                    <Cart cartLocalOverride={cartLocal} hideCheckoutButton readOnly />
                 </Paper>
             </Grid.Col>
         </Grid>

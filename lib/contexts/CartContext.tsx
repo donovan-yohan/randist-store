@@ -30,6 +30,7 @@ type CartContextType = {
     removeQuantity: (id: CartId) => void
     submittedOrder: boolean
     setSubmittedOrder: (submitted: boolean) => void
+    clearCachedCart: () => void
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -39,6 +40,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         key: 'randist-cart',
         defaultValue: [],
     })
+
     const [submittedOrder, setSubmittedOrder] = useState(false)
 
     const addToCart = (item: CartItem) => {

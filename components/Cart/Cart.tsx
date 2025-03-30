@@ -1,4 +1,4 @@
-import { useCart } from "@/lib/contexts/CartContext"
+import { CartItem, useCart } from "@/lib/contexts/CartContext"
 import { ActionIcon, Anchor, Button, Divider, Group, Image, NumberFormatter, Space, Stack, Text } from "@mantine/core"
 import { IconMinus, IconPlus, IconTrash } from "@tabler/icons-react"
 import Link from "next/link"
@@ -7,15 +7,18 @@ import { useRouter } from "next/navigation"
 interface CartProps {
     hideCheckoutButton?: boolean
     readOnly?: boolean
+    cartLocalOverride?: CartItem[]
 }
 const Cart: React.FC<CartProps> = (props) => {
     const { cart, removeFromCart, addQuantity, removeQuantity } = useCart()
     const router = useRouter()
 
-    if (cart.length === 0) { return <Text>Your cart is empty.</Text> }
+    const cartItems = props.cartLocalOverride || cart
+
+    if (cartItems.length === 0) { return <Text>Your cart is empty.</Text> }
     return (
         <Stack>
-            {cart.map(cartItem => {
+            {cartItems.map(cartItem => {
                 return (
                     <Stack key={`${cartItem.productId}-${cartItem.optionId}-${cartItem.size}`} gap="xs">
                         <Group justify="space-between">
@@ -71,10 +74,10 @@ const Cart: React.FC<CartProps> = (props) => {
             })}
             <Divider />
             <Group justify="space-between">
-                <Text fw={500}>Total {cart.reduce((acc, cur) => acc + cur.quantity, 0)} items</Text>
+                <Text fw={500}>Total {cartItems.reduce((acc, cur) => acc + cur.quantity, 0)} items</Text>
                 <Text fw={500}>
                     <NumberFormatter
-                        value={cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}
+                        value={cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)}
                         decimalScale={2}
                         thousandSeparator
                         prefix="$"

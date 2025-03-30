@@ -9,6 +9,7 @@ import { useForm } from '@mantine/form'
 import { useLocalStorage } from '@mantine/hooks'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 interface CustomerInfo {
     email: string
@@ -41,15 +42,15 @@ const defaultCustomerInfo: CustomerInfo = {
 }
 
 export default function CheckoutPage() {
-    const { cart } = useCart()
+    const { cart, setSubmittedOrder } = useCart()
     const router = useRouter()
     const [savedInfo, setSavedInfo] = useLocalStorage<CustomerInfo>({
         key: 'checkoutInfo',
         defaultValue: { ...defaultCustomerInfo },
     })
-    const form = useForm<CustomerInfo>({
-        initialValues: savedInfo,
 
+    const form = useForm<CustomerInfo>({
+        initialValues: { ...savedInfo },
         validate: {
             email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
             phoneNumber: (value) =>
@@ -67,6 +68,10 @@ export default function CheckoutPage() {
     })
 
     const { mutate: sendEmail, isPending } = useMutation(sendEmailOptions)
+
+    useEffect(() => {
+        form.setValues(savedInfo)
+    }, [savedInfo])
 
     return (
         <Grid gutter="xl" align="start">
@@ -218,7 +223,10 @@ export default function CheckoutPage() {
                                     paymentMethod: values.paymentMethod || 'etransfer',
                                     items: cart
                                 }, {
-                                    onSuccess: () => { router.push('/checkout/confirmed') }
+                                    onSuccess: () => {
+                                        setSubmittedOrder(true)
+                                        router.push('/checkout/confirmed')
+                                    }
                                 })
                                 if (values.saveInfo) {
                                     setSavedInfo(values)
