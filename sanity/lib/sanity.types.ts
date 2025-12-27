@@ -239,13 +239,17 @@ export type ProductListResult = Array<{
   _id: string;
   name: string;
   price: number | undefined;
-  productImages: {
-    _key: string;
-    asset: {
-      _id: string;
-      url: string | undefined;
-    } | undefined;
-  } | undefined;
+  productImages:
+    | {
+        _key: string;
+        asset:
+          | {
+              _id: string;
+              url: string | undefined;
+            }
+          | undefined;
+      }
+    | undefined;
 }>;
 // Variable: ProductListWithSearch
 // Query: *[_type == "product" && (  name match $keywordsFuzzy || count(tags[@ in $keywords]) > 0)] | order(name asc)[0..100] {  _id,  name,  price,  tags,  "productImages": options[]{    images[]{      _key,      asset->{        _id,        url      }    }  }[0].images[0]}
@@ -254,62 +258,68 @@ export type ProductListWithSearchResult = Array<{
   name: string;
   price: number | undefined;
   tags: Array<string> | undefined;
-  productImages: {
-    _key: string;
-    asset: {
-      _id: string;
-      url: string | undefined;
-    } | undefined;
-  } | undefined;
+  productImages:
+    | {
+        _key: string;
+        asset:
+          | {
+              _id: string;
+              url: string | undefined;
+            }
+          | undefined;
+      }
+    | undefined;
 }>;
 // Variable: ProductDetail
 // Query: *[_type == "product" && _id == $id][0]
-export type ProductDetailResult = {
-  _id: string;
-  _type: 'product';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name: string;
-  description?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
-    listItem?: 'bullet' | 'number';
-    markDefs?: Array<{
-      href?: string;
-      _type: 'link';
-      _key: string;
-    }>;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  price?: number;
-  options?: Array<{
-    name?: string;
-    colour?: Color;
-    images?: Array<{
-      asset?: {
-        _ref: string;
-        _type: 'reference';
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
-      };
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: 'image';
-      _key: string;
-    }>;
-    _key: string;
-  }>;
-  sizes?: Array<'large' | 'medium' | 'small' | 'xlarge' | 'xsmall' | 'xxlarge' | 'xxxlarge'>;
-  tags?: Array<string>;
-} | undefined;
+export type ProductDetailResult =
+  | {
+      _id: string;
+      _type: 'product';
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      name: string;
+      description?: Array<{
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: 'span';
+          _key: string;
+        }>;
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal';
+        listItem?: 'bullet' | 'number';
+        markDefs?: Array<{
+          href?: string;
+          _type: 'link';
+          _key: string;
+        }>;
+        level?: number;
+        _type: 'block';
+        _key: string;
+      }>;
+      price?: number;
+      options?: Array<{
+        name?: string;
+        colour?: Color;
+        images?: Array<{
+          asset?: {
+            _ref: string;
+            _type: 'reference';
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: 'image';
+          _key: string;
+        }>;
+        _key: string;
+      }>;
+      sizes?: Array<'large' | 'medium' | 'small' | 'xlarge' | 'xsmall' | 'xxlarge' | 'xxxlarge'>;
+      tags?: Array<string>;
+    }
+  | undefined;
 // Variable: CartProductList
 // Query: *[_type == "product" && _id in $productIds] | order(name asc) {  _id,  name,  price,  "productImages": *[_type == "product" && _id == ^._id][0].options[ _key == $optionMap[^._id] ][0].images[0]{    _key,    asset->{      _id,      url    }  }}
 export type CartProductListResult = Array<{
