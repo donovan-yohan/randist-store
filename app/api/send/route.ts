@@ -1,9 +1,8 @@
 import { Resend } from 'resend';
 import { InvoiceEmail, InvoiceEmailProps } from '@/lib/emails/InvoiceEmail';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     // TODO: add validation
     const body = (await req.json()) as InvoiceEmailProps;
