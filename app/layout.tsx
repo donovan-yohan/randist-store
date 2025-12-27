@@ -1,16 +1,15 @@
-import '@mantine/core/styles.css'
-import '@mantine/notifications/styles.css'
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 
-import Providers from '@/components/Providers/Providers'
-import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core'
+import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
+import Providers from '@/components/Providers/Providers';
 
 export const metadata = {
   title: 'Randist Custom Printing',
   description: 'Custom apparel, accessories, and more. Contact us if you have a design in mind!',
-}
+};
 
 export default function RootLayout({ children }: { children: any }) {
-
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -25,10 +24,8 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
-  )
+  );
 }
